@@ -1,20 +1,30 @@
 package com.priyanshu.monitor_service.scheduling.service;
 
 import com.priyanshu.monitor_service.config.MonitorConfig;
+import com.priyanshu.monitor_service.database.entity.WebsiteStatus;
+import com.priyanshu.monitor_service.database.repository.DbFactory;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
 
 @Service
+@Slf4j
 public class WebsiteMonitorService {
 
     private final MonitorConfig monitorConfig;
+    private final DbFactory dbFactory;
+    private final RestTemplate restTemplate = new RestTemplate();
 
-    public WebsiteMonitorService(MonitorConfig monitorConfig) {
+
+    public WebsiteMonitorService(MonitorConfig monitorConfig,DbFactory dbFactory) {
         this.monitorConfig = monitorConfig;
+        this.dbFactory=dbFactory;
     }
 
     @PostConstruct
@@ -24,20 +34,17 @@ public class WebsiteMonitorService {
 
     @Scheduled(cron = "#{@monitorConfig.checkInterval}")
     public void monitorWebsites() {
-        for (String url : monitorConfig.getUrls()) {
+        List<WebsiteStatus> websites = dbFactory.getWebsiteStatusRepository().findAll();
+        for (WebsiteStatus website : websites) {
             try {
-                HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-                connection.setRequestMethod("GET");
-                connection.connect();
-                int code = connection.getResponseCode();
-                if (code == 200) {
-                    System.out.println(url + " is UP");
-                } else {
-                    System.out.println(url + " is DOWN  | Status code: " + code);
-                }
+                restTemplate.getForEntity(website.getUrl(), String.class);
+                website.setStatus("UP");
             } catch (Exception e) {
-                System.out.println(url + " is DOWN | Error: " + e.getMessage());
+                website.setStatus("DOWN");
             }
+            website.setLastCheckedAt(LocalDateTime.now());
+            log.info("\nurl info :{}",website);
+            dbFactory.getWebsiteStatusRepository().save(website);
         }
     }
 }
