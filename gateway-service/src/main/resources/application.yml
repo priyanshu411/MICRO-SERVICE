@@ -1,0 +1,8 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: monitor-service
+          uri: lb://monitor-service
+          predicates:
+            - Path=/monitor/**  # Ensure this path matches your API endpoint
