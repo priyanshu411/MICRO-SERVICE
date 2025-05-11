@@ -24,4 +24,6 @@ public class WebsiteStatus {
     private String url;
     private String status;
     private LocalDateTime lastCheckedAt;
+    private String PreviousStatus;
+    private String alertEmail;
 }
