@@ -5,4 +5,8 @@ spring:
         - id: monitor-service
           uri: lb://monitor-service
           predicates:
-            - Path=/monitor/**  # Ensure this path matches your API endpoint
+            - Path=/monitor/**
+        - id: email-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/notify/**
