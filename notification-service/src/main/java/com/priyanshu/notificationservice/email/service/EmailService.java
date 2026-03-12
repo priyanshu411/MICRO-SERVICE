@@ -17,20 +17,15 @@ public class EmailService implements IEmailService{
     @Autowired
     private JavaMailSender mailSender;
     @Override
-    public void sendDownAlert(NotificationRequest request) {
-        try {
-            MimeMessage mimeMessage = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+    public void sendDownAlert(NotificationRequest request) throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+        String to=request.getTo().trim();
+        helper.setTo(to);
+        helper.setSubject(request.getSubject());
+        helper.setText(request.getBody(), true); // 'true' means it's HTML
+//            mailSender.send(mimeMessage);
 
-            helper.setTo(request.getTo());
-            helper.setSubject(request.getSubject());
-            helper.setText(request.getBody(), true); // 'true' means it's HTML
-
-            mailSender.send(mimeMessage);
-        } catch (MessagingException e) {
-            log.error(e.getMessage());
-
-        }
     }
 
 }

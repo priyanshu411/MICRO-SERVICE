@@ -1,18 +1,5 @@
 server:
   address: 0.0.0.0
-spring:
-  cloud:
-    gateway:
-      routes:
-        - id: monitor-service
-          uri: lb://monitor-service
-          predicates:
-            - Path=/monitor/**
-        - id: email-service
-          uri: lb://notification-service
-          predicates:
-            - Path=/api/notify/**
-
 management:
   endpoints:
     web:
@@ -30,6 +17,7 @@ management:
   otlp:
     tracing:
       endpoint: http://localhost:4318/v1/traces
+
 
 logging:
   file:

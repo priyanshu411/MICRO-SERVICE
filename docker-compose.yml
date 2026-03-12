@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  config-server:
+    image: config-service
+    container_name: config-service
+    ports:
+      - "8081:8081"
+    volumes:
+      - /c/Users/user_2/Documents/GitHub/config-file:/config  # local config folder
+    environment:
+      - SPRING_PROFILES_ACTIVE=native
+      - SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS=file:/config
+    networks:
+      - microservice-net
+
+  discovery:
+    image: discovery-service
+    container_name: discovery-service
+    ports:
+      - "8761:8761"
+    depends_on:
+      - config-server
+    networks:
+      - microservice-net
+
+#  gateway-service:
+#    image: gateway-service
+#    container_name: gateway-service
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - discovery
+#    networks:
+#      - microservice-net
+
+  monitor-service:
+    image: monitor-service
+    container_name: monitor-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - config-server
+      - discovery
+    environment:
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8081
+    networks:
+      - microservice-net
+
+#  notification-service:
+#    image: notification-service
+#    container_name: notification-service
+#    ports:
+#      - "8083:8083"
+#    depends_on:
+#      - config-server
+#      - discovery
+#    networks:
+#      - microservice-net
+
+networks:
+  microservice-net:
+    driver: bridge

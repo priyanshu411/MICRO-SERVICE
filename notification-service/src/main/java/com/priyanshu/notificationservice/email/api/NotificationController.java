@@ -2,6 +2,7 @@ package com.priyanshu.notificationservice.email.api;
 
 import com.priyanshu.notificationservice.email.dto.NotificationRequest;
 import com.priyanshu.notificationservice.email.service.EmailService;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,7 +16,7 @@ public class NotificationController {
     private EmailService emailService;
 
     @PostMapping("/email")
-    public String sendEmail(@RequestBody NotificationRequest request) {
+    public String sendEmail(@RequestBody NotificationRequest request) throws MessagingException {
 
         emailService.sendDownAlert(request);
         return "Email sent successfully!";

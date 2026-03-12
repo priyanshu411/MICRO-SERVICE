@@ -47,13 +47,13 @@ public class WebsiteMonitorService {
             } catch (Exception e) {
                 website.setStatus("DOWN");
                 website.setPreviousStatus(previousStatus);
-                if (previousStatus.equals("UP")) {
+//                if (previousStatus.equals("UP")) {
                     String html = htmlBody
                             .replace("{{website_url}}", website.getUrl())
                             .replace("{{timestamp}}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
 
                     notificationClient.sendDownNotification(new NotificationRequest(website.getAlertEmail(), subject, html));
-                }
+//                }
             }
             website.setLastCheckedAt(LocalDateTime.now());
             log.info("\nurl info :{}",website);

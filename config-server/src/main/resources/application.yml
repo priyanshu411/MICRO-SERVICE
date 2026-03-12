@@ -1,0 +1,5 @@
+logging:
+  file:
+    name: D:/spring-logs/${spring.application.name}.log
+#  pattern:
+#    level: "%d{yyyy-MM-dd HH:mm:ss.SSS} %5p [${spring.application.name}] [%t] [%X{traceId:-},%X{spanId:-}] %logger{36} - %msg%n"
