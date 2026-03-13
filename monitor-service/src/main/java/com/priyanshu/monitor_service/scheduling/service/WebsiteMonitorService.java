@@ -1,5 +1,6 @@
 package com.priyanshu.monitor_service.scheduling.service;
 
+import com.priyanshu.monitor_service.anotation.MonitoredScheduler;
 import com.priyanshu.monitor_service.client.NotificationClient;
 import com.priyanshu.monitor_service.client.dto.NotificationRequest;
 import com.priyanshu.monitor_service.database.entity.WebsiteStatus;
@@ -36,6 +37,7 @@ public class WebsiteMonitorService {
 
 
     @Scheduled(cron = "${monitor.check-interval}")
+    @MonitoredScheduler(jobName = "monitor_websites")
     public void monitorWebsites() {
         List<WebsiteStatus> websites = dbFactory.getWebsiteStatusRepository().findAll();
         for (WebsiteStatus website : websites) {
